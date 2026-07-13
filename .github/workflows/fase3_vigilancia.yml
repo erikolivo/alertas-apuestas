@@ -1,0 +1,38 @@
+name: Fase 3 - Vigilancia inteligente
+
+on:
+  schedule:
+    # Cada 5 minutos: es el "tick" base. El propio monitor.py decide si
+    # de verdad toca trabajar en cada tick (cada 10 min si hay pocos
+    # partidos en ventana, cada 15 si hay muchos) — frecuencia adaptativa.
+    # Si no toca, termina casi de inmediato sin gastar cupo de API.
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  vigilar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+
+      - name: Revisar partidos en vivo y alertar si aplica
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python monitor.py
+
+      - name: Guardar cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/partidos_hoy.json data/uso_api_football.json
+          git diff --quiet --cached || git commit -m "Actualizar vigilancia"
+          git push

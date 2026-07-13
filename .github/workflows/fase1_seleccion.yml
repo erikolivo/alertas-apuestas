@@ -1,0 +1,36 @@
+name: Fase 1 - Seleccion de partidos
+
+on:
+  schedule:
+    # Cada 5 minutos, de 04:00 a 23:55 UTC-5 (09:00 a 04:55 UTC).
+    # Cada corrida primero revisa si ya se completó hoy; si es así, termina
+    # de inmediato sin gastar nada. Esto implementa "reintentar cada 5 min
+    # hasta lograrlo" sin bloquear un job larguísimo.
+    - cron: "*/5 9-23,0-4 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  seleccionar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+
+      - name: Seleccionar partidos del día
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+        run: python seleccionar_partidos.py
+
+      - name: Guardar cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/partidos_hoy.json data/_cache_ranking.csv
+          git diff --quiet --cached || git commit -m "Selección de partidos del día"
+          git push

@@ -1,0 +1,23 @@
+name: Fase 2 - Resumen diario
+
+on:
+  schedule:
+    # 12:00 UTC = 07:00 (7am) en Colombia/Perú/Ecuador (UTC-5).
+    - cron: "0 12 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  resumen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+
+      - name: Enviar resumen a Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python resumen.py

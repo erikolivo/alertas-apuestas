@@ -1,0 +1,23 @@
+name: Reporte diario (resultados de ayer)
+
+on:
+  schedule:
+    # 11:00 UTC = 06:00 (6am) en Colombia/Perú/Ecuador (UTC-5).
+    - cron: "0 11 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  reporte:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+
+      - name: Enviar reporte de resultados de ayer
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python reporte_diario.py
