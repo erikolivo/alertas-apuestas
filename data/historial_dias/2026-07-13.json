@@ -121,5 +121,7 @@
       "historial_snapshots": [],
       "alertas_enviadas": []
     }
-  ]
+  ],
+  "api_football_usadas": 7,
+  "api_football_disponibles": 93
 }
