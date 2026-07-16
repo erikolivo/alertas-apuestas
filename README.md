@@ -46,6 +46,29 @@ Cada alerta incluye estadísticas completas (tiros, tiros a puerta,
 córners, posesión) y links de búsqueda a BeSoccer y Ecuabet (vía Google
 — no son URLs exactas, ninguno tiene API pública gratis).
 
+## Corrección importante: GitHub Actions no es confiable con crons frecuentes
+
+Se detectó (con datos reales de un día de prueba) que GitHub Actions **no
+garantiza** que un workflow programado cada 5 minutos corra realmente cada
+5 minutos — puede tardar hasta una hora entre ejecuciones, o saltarse
+ejecuciones por completo. Es una limitación documentada de la plataforma,
+no un bug del código. Esto causaba que Fase 3 casi no vigilara los
+partidos, y que Fase 4 (un solo disparo a las 23:30) a veces no llegara a
+correr ese día.
+
+**La solución aplicada:**
+- **Fase 3** ahora se dispara solo 4 veces al día (mucho más confiable) y
+  cada disparo se queda corriendo por dentro ~5.5 horas, revisando cada 5
+  minutos con una espera propia (`sleep`) que no depende de que GitHub lo
+  vuelva a agendar.
+- **Fase 2, Fase 4, y el Reporte diario** pasaron de "un solo disparo a
+  hora fija" a "reintentar cada 15 min dentro de una ventana de 1-2
+  horas", con un mecanismo (`estado_diario.py`) que evita que se repita
+  el mensaje una vez que ya se envió ese día.
+- Todos los `git push` ahora reintentan automáticamente con
+  `git pull --rebase` si chocan con otra ejecución escribiendo al mismo
+  tiempo.
+
 ## Decisiones importantes de esta versión
 
 - **"Cuota inicial" sigue siendo un proxy de Elo+GoalIndex**, no una

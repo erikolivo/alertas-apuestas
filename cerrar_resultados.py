@@ -1,15 +1,17 @@
 """
 cerrar_resultados.py
 ---------------------
-FASE 4, versión 2. Corre 1 vez al final del día (23:30). Hace 3 cosas:
+FASE 4, versión 3. Reintenta cada 15 min entre las 23:00 y la 01:00 (ver
+el workflow) hasta lograrlo, en vez de depender de un solo disparo exacto
+a las 23:30 — esto fue justo lo que falló: el día que probamos, esa
+ejecución puntual no llegó a correr a tiempo (o no corrió), y como no
+había ningún reintento, ningún partido quedó resuelto ese día.
 
+Hace 3 cosas:
   1. Consulta el resultado final de cada partido seleccionado hoy y
      calcula si acertó el favorito (ganó) o no.
-  2. Archiva el día completo en data/historial_dias/{fecha}.json — esto
-     es lo que lee reporte_diario.py a las 6am del día siguiente, sin
-     tener que volver a consultar nada.
-  3. Actualiza data/estadisticas.xlsx (2 pestañas: resultados por
-     partido, y resumen por día) para que puedas analizar todo en Excel.
+  2. Archiva el día completo en data/historial_dias/{fecha}.json.
+  3. Actualiza data/estadisticas.xlsx (2 pestañas).
 """
 
 import json
@@ -17,6 +19,7 @@ from pathlib import Path
 
 from fetch_data import obtener_resultado_fixture
 from cuota_api_football import uso_de_hoy
+from estado_diario import ya_se_hizo, marcar_hecho
 
 DATA_DIR = Path(__file__).parent / "data"
 ARCHIVO_PARTIDOS = DATA_DIR / "partidos_hoy.json"
@@ -33,8 +36,12 @@ def _calcular_acierto(p, goles_local, goles_visitante):
 
 
 def cerrar():
+    if ya_se_hizo("cierre"):
+        print("El cierre de hoy ya se hizo antes. Nada que hacer.")
+        return
+
     if not ARCHIVO_PARTIDOS.exists():
-        print("No hay partidos_hoy.json todavía.")
+        print("No hay partidos_hoy.json todavía. Se reintentará en el próximo ciclo.")
         return
 
     datos = json.loads(ARCHIVO_PARTIDOS.read_text(encoding="utf-8"))
@@ -76,6 +83,7 @@ def cerrar():
     print(f"Día archivado en {archivo_dia}")
 
     _actualizar_excel(datos["fecha"], datos["partidos"], usadas, disponibles)
+    marcar_hecho("cierre")
 
 
 def _actualizar_excel(fecha, partidos, usadas, disponibles):
