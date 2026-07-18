@@ -13,7 +13,7 @@ import json
 import datetime
 from pathlib import Path
 
-from telegram_utils import enviar_mensaje_telegram
+from telegram_utils import enviar_mensaje_telegram, escapar_html
 from estado_diario import ya_se_hizo, marcar_hecho
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -50,7 +50,7 @@ def enviar_reporte():
             else:
                 marca = "❓"
             resultado_txt = f" (resultado {p['resultado_final']})" if p.get("resultado_final") else " (sin resolver)"
-            lineas.append(f"{marca} {p['partido']} — favorito: {p['favorito']}{resultado_txt}")
+            lineas.append(f"{marca} {escapar_html(p['partido'])} — favorito: {escapar_html(p['favorito'])}{resultado_txt}")
 
         resueltos = [p for p in partidos if p.get("acierto") is not None]
         aciertos = sum(1 for p in resueltos if p["acierto"])

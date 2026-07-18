@@ -23,6 +23,28 @@ TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
 
+def escapar_html(texto):
+    """
+    Convierte &, < y > a su forma segura para HTML. Telegram usa
+    parse_mode=HTML, así que cualquier texto dinámico que insertemos en
+    un mensaje (nombres de equipo, ligas, etc.) DEBE pasar por aquí antes
+    de meterlo al mensaje — si no, un nombre de equipo con "&" (bastante
+    común, ej. clubes con "&" en el nombre oficial) rompe el envío entero
+    con un error 400 de Telegram. Ya nos pasó una vez con el símbolo
+    "<=" en el texto fijo del mensaje; esto lo generaliza para CUALQUIER
+    texto que venga de datos externos (nombres de equipo), no solo para
+    los símbolos que ya conocemos.
+
+    IMPORTANTE: solo se aplica al texto dinámico (nombres, etc.), NUNCA
+    a las etiquetas <b>...</b> que nosotros mismos escribimos a propósito
+    en el mensaje — esas deben quedar intactas para que Telegram las
+    interprete como negrita.
+    """
+    if texto is None:
+        return ""
+    return str(texto).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
 def enviar_mensaje_telegram(texto):
     """Envía 'texto' al chat configurado. No lanza error si faltan credenciales,
     solo avisa por consola (para no tumbar el workflow completo)."""

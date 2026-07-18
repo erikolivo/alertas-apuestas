@@ -11,7 +11,7 @@ import json
 import datetime
 from pathlib import Path
 
-from telegram_utils import enviar_mensaje_telegram
+from telegram_utils import enviar_mensaje_telegram, escapar_html
 from estado_diario import ya_se_hizo, marcar_hecho
 
 ARCHIVO = Path(__file__).parent / "data" / "partidos_hoy.json"
@@ -55,7 +55,7 @@ def enviar_resumen():
         hora = _hora_local(p.get("hora_inicio"))
         estado = "✅" if p["fixture_id"] else "⚠️ sin vigilancia en vivo"
         lineas.append(
-            f"• {hora} — {p['partido']} · favorito: {p['favorito']} "
+            f"• {hora} — {escapar_html(p['partido'])} · favorito: {escapar_html(p['favorito'])} "
             f"(cuota inicial {p['cuota_inicial']}) {estado}"
         )
 

@@ -35,7 +35,7 @@ from pathlib import Path
 from datetime import datetime, timezone, timedelta
 
 from fetch_data import obtener_partidos_en_vivo, obtener_estadisticas_fixture
-from telegram_utils import enviar_mensaje_telegram
+from telegram_utils import enviar_mensaje_telegram, escapar_html
 from poisson_model import probabilidad_gol_inminente
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -193,21 +193,32 @@ MENSAJES_POR_TIPO = {
 
 
 def _construir_mensaje(p, tipo, motivo, minuto, goles_local, goles_visitante, snap_actual):
-    titulo = MENSAJES_POR_TIPO[tipo].format(favorito=p["favorito"], no_favorito=p["no_favorito"])
+    # Escapamos aquí, en un solo punto, todo lo que puede traer texto de
+    # nombres de equipo (favorito, no_favorito, local, visitante, y el
+    # motivo -- que ya trae esos nombres insertados). Así, sin importar
+    # qué símbolo raro traiga un nombre de equipo (ej. "&"), nunca vuelve
+    # a romper el envío a Telegram.
+    favorito = escapar_html(p["favorito"])
+    no_favorito = escapar_html(p["no_favorito"])
+    local = escapar_html(p["local"])
+    visitante = escapar_html(p["visitante"])
+    motivo_seguro = escapar_html(motivo)
+
+    titulo = MENSAJES_POR_TIPO[tipo].format(favorito=favorito, no_favorito=no_favorito)
     link_besoccer = _link_busqueda(p["local"], p["visitante"], "besoccer")
     link_ecuabet = _link_busqueda(p["local"], p["visitante"], "ecuabet")
 
     return (
         f"{titulo}\n\n"
-        f"{p['local']} vs {p['visitante']}\n"
+        f"{local} vs {visitante}\n"
         f"Minuto: {minuto} · Marcador: {goles_local}-{goles_visitante}\n\n"
-        f"Motivo: {motivo}\n\n"
+        f"Motivo: {motivo_seguro}\n\n"
         f"📊 Estadísticas:\n"
         f"Tiros: {snap_actual['tiros_local']}-{snap_actual['tiros_visitante']} "
         f"(a puerta: {snap_actual['tiros_puerta_local']}-{snap_actual['tiros_puerta_visitante']})\n"
         f"Córners: {snap_actual['corners_local']}-{snap_actual['corners_visitante']}\n"
         f"Posesión: {snap_actual['posesion_local']:.0f}%-{snap_actual['posesion_visitante']:.0f}%\n\n"
-        f"Cuota inicial ({p['favorito']}): {p['cuota_inicial']} (prob. inicial {p['probabilidad_inicial']}%)\n\n"
+        f"Cuota inicial ({favorito}): {p['cuota_inicial']} (prob. inicial {p['probabilidad_inicial']}%)\n\n"
         f"Ver en BeSoccer: {link_besoccer}\n"
         f"Ver en Ecuabet: {link_ecuabet}"
     )
