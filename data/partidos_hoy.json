@@ -523,8 +523,28 @@
       "kickoff_utc": "2026-07-22T23:30:00+00:00",
       "resultado_final": null,
       "acierto": null,
-      "historial_snapshots": [],
-      "alertas_enviadas": []
+      "historial_snapshots": [
+        {
+          "minuto": 9,
+          "tiros_local": 0.0,
+          "tiros_visitante": 0.0,
+          "tiros_puerta_local": 0.0,
+          "tiros_puerta_visitante": 0.0,
+          "corners_local": 0,
+          "corners_visitante": 0,
+          "posesion_local": 62.0,
+          "posesion_visitante": 38.0,
+          "rojas_local": 0,
+          "rojas_visitante": 0
+        }
+      ],
+      "alertas_enviadas": [
+        {
+          "tipo": "gana_favorito_1er_tiempo",
+          "minuto": 9,
+          "probabilidad": 0.42
+        }
+      ]
     }
   ]
 }
