@@ -614,6 +614,19 @@
           "posesion_visitante": 47.0,
           "rojas_local": 0,
           "rojas_visitante": 0
+        },
+        {
+          "minuto": 58,
+          "tiros_local": 8.0,
+          "tiros_visitante": 3.0,
+          "tiros_puerta_local": 1.0,
+          "tiros_puerta_visitante": 1.0,
+          "corners_local": 5.0,
+          "corners_visitante": 1.0,
+          "posesion_local": 52.0,
+          "posesion_visitante": 48.0,
+          "rojas_local": 0,
+          "rojas_visitante": 0
         }
       ],
       "alertas_enviadas": [
@@ -650,6 +663,11 @@
         {
           "tipo": "ampliacion_marcador",
           "minuto": 48,
+          "probabilidad": 0.42
+        },
+        {
+          "tipo": "ampliacion_marcador",
+          "minuto": 58,
           "probabilidad": 0.42
         }
       ]
