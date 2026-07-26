@@ -347,12 +347,30 @@
           "posesion_visitante": 56.0,
           "rojas_local": 0,
           "rojas_visitante": 0
+        },
+        {
+          "minuto": 87,
+          "tiros_local": 11.0,
+          "tiros_visitante": 11.0,
+          "tiros_puerta_local": 4.0,
+          "tiros_puerta_visitante": 3.0,
+          "corners_local": 4.0,
+          "corners_visitante": 3.0,
+          "posesion_local": 46.0,
+          "posesion_visitante": 54.0,
+          "rojas_local": 0,
+          "rojas_visitante": 0
         }
       ],
       "alertas_enviadas": [
         {
           "tipo": "posible_victoria_favorito",
           "minuto": 72,
+          "probabilidad": 0.42
+        },
+        {
+          "tipo": "ampliacion_marcador",
+          "minuto": 87,
           "probabilidad": 0.42
         }
       ]
