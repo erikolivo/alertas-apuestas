@@ -334,8 +334,28 @@
       "kickoff_utc": "2026-07-26T14:30:00+00:00",
       "resultado_final": null,
       "acierto": null,
-      "historial_snapshots": [],
-      "alertas_enviadas": []
+      "historial_snapshots": [
+        {
+          "minuto": 72,
+          "tiros_local": 8.0,
+          "tiros_visitante": 10.0,
+          "tiros_puerta_local": 2.0,
+          "tiros_puerta_visitante": 3.0,
+          "corners_local": 3.0,
+          "corners_visitante": 3.0,
+          "posesion_local": 44.0,
+          "posesion_visitante": 56.0,
+          "rojas_local": 0,
+          "rojas_visitante": 0
+        }
+      ],
+      "alertas_enviadas": [
+        {
+          "tipo": "posible_victoria_favorito",
+          "minuto": 72,
+          "probabilidad": 0.42
+        }
+      ]
     },
     {
       "partido": "Kaspiy vs Zhenys",
